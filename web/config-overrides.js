@@ -9,6 +9,7 @@ const appDirectory = fs.realpathSync(process.cwd());
 const resolveApp = relativePath => path.resolve(appDirectory, relativePath);
 
 module.exports = function override(config, env) {
+  console.log(123);
   config = rewireCssModules(config, env);
   config = rewireBabelLoader.include(
     config,

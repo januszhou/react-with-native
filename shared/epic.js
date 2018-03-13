@@ -2,21 +2,33 @@ import { Observable } from 'rxjs/Observable';
 import { ajax } from 'rxjs/observable/dom/ajax';
 
 // Actions
-const SEARCH = 'APP/SEARCH';
-const LOAD = 'APP/LOAD';
-const ERROR = 'APP/ERROR';
-const FETCH_DETAIL = 'APP/FETCH_DETAIL';
-const LOAD_DETAIL = 'APP/LOAD_DETAIL';
+const LOGIN = 'APP/LOGIN';
+const LOGIN_SUCCESS = 'APP/LOGIN_SUCCESS';
+const LOGIN_ERROR = 'APP/LOGIN_ERROR';
 
+const FACULTY_SEARCH = 'APP/FACULTY_SEARCH';
+const FACULTY_LOAD = 'APP/FACULTY_LOAD';
+
+const initialState = {
+  loginLoading: false,
+  token: '',
+  userName: '',
+  loginError: '',
+  facultyLoading: false,
+  facultyList: []
+};
 // Reducer
 export default function reducer(state = {}, action = {}) {
   switch (action.type) {
-    case SEARCH: {
-      return {...state, loading: true};
+    case LOGIN: {
+      return {...state, loginLoading: true};
     }
-    case LOAD: {
-      const list = {};
-      return {...state, list, loading: false};
+    case LOGIN_SUCCESS: {
+      const { kbs_token: token, userName } = action.payload.data;
+      return {...state, token, userName, loginLoading: false, loginError: ''};
+    }
+    case LOGIN_ERROR: {
+      return {...state, loginLoading: false, loginError: action.payload.error};
     }
     default:
       return state;
@@ -24,39 +36,54 @@ export default function reducer(state = {}, action = {}) {
 }
 
 // Actions
-export function doSearch({name}) {
+export function doLogin({ username, password }) {
   return {
-    type: SEARCH,
+    type: LOGIN,
+    payload: { username, password }
+  };
+}
+
+export function doSearchFaculty({ name }) {
+  return {
+    type: FACULTY_SEARCH,
     payload: { name }
   };
 }
-export function doLoad({list}) {
+
+export function doLoadFaculty({ list }) {
   return {
-    type: LOAD,
-    payload: {list}
-  };
-}
-export function doError({error}) {
-  return {
-    type: ERROR,
-    error
+    type: FACULTY_LOAD,
+    payload: { list }
   };
 }
 
+export function doLoginSuccess({ data }) {
+  return {
+    type: LOGIN_SUCCESS,
+    payload: { data }
+  };
+}
+
+export function doLoginError({ error }) {
+  return {
+    type: LOGIN_ERROR,
+    payload: { error }
+  };
+}
 
 // Epics
-export const searchEpic = (action$) =>
+export const loginEpic = (action$) =>
   action$
-    .ofType(SEARCH) // it must depends on KE Token
-    .mergeMap(({name}) =>
+    .ofType(LOGIN)
+    .map(({ payload: { username, password } }) => btoa(`${username}:${password}`))
+    .mergeMap(token =>
       ajax({
-        url: `https://api.github.com/search/users?q=${name}`,
-        headers: {
-          // Authorization: TOKEN
-        },
+        url: `https://auth.kaptest.com/auth/kbs/token/${token}`,
+        headers: {},
+        crossDomain: true,
         method: 'GET'
       })
         .map(r => r.response)
-        .map(list => doLoad({ list }))
-        .catch(error => Observable.of(doError({ error })))
+        .map(data => doLoginSuccess({ data }))
+        .catch(error => Observable.of(doLoginError({ error: 'Bad credentials, Please try again.' })))
     );

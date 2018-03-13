@@ -1,14 +1,14 @@
 import { combineEpics } from 'redux-observable';
 import { combineReducers } from 'redux';
 
-import search, {
-  searchEpic
+import app, {
+  loginEpic
 } from './epic';
 
 export const rootEpic = combineEpics(
-  searchEpic
+  loginEpic
 );
 
 export const rootReducer = combineReducers({
-  search
+  app
 });
