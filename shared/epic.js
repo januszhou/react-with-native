@@ -2,7 +2,7 @@ import { Observable } from 'rxjs/Observable';
 import { ajax } from 'rxjs/observable/dom/ajax';
 
 // Actions
-const SERACH = 'APP/SERACH';
+const SEARCH = 'APP/SEARCH';
 const LOAD = 'APP/LOAD';
 const ERROR = 'APP/ERROR';
 const FETCH_DETAIL = 'APP/FETCH_DETAIL';
@@ -11,7 +11,7 @@ const LOAD_DETAIL = 'APP/LOAD_DETAIL';
 // Reducer
 export default function reducer(state = {}, action = {}) {
   switch (action.type) {
-    case SERACH: {
+    case SEARCH: {
       return {...state, loading: true};
     }
     case LOAD: {
@@ -26,7 +26,7 @@ export default function reducer(state = {}, action = {}) {
 // Actions
 export function doSearch({name}) {
   return {
-    type: SERACH,
+    type: SEARCH,
     payload: { name }
   };
 }
@@ -47,7 +47,7 @@ export function doError({error}) {
 // Epics
 export const searchEpic = (action$) =>
   action$
-    .ofType(SERACH) // it must depends on KE Token
+    .ofType(SEARCH) // it must depends on KE Token
     .mergeMap(({name}) =>
       ajax({
         url: `https://api.github.com/search/users?q=${name}`,
@@ -60,7 +60,3 @@ export const searchEpic = (action$) =>
         .map(list => doLoad({ list }))
         .catch(error => Observable.of(doError({ error })))
     );
-
-
-
-

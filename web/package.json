@@ -1,0 +1,22 @@
+{
+  "name": "react-with-native",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@abot/react-higgs": "^1.0.26",
+    "react": "^16.2.0",
+    "react-app-rewire-babel-loader": "^0.1.1",
+    "react-app-rewire-css-modules": "januszhou/react-app-rewire-css-modules",
+    "react-app-rewired": "^1.5.0",
+    "react-dom": "^16.2.0",
+    "react-router-dom": "^4.2.2",
+    "react-scripts": "1.1.1",
+    "shared": "file:../shared"
+  },
+  "scripts": {
+    "start": "react-app-rewired start",
+    "build": "react-app-rewired build",
+    "test": "react-app-rewired test --env=jsdom",
+    "eject": "react-app-rewired eject"
+  }
+}
