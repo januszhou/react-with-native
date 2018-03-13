@@ -4,6 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
+    "js-base64": "^2.4.3",
     "react-redux": "^5.0.7",
     "redux": "^3.7.2",
     "redux-observable": "^0.18.0",

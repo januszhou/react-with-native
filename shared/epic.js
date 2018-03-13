@@ -1,6 +1,6 @@
 import { Observable } from 'rxjs/Observable';
 import { ajax } from 'rxjs/observable/dom/ajax';
-
+import { Base64 } from 'js-base64';
 // Actions
 const LOGIN = 'APP/LOGIN';
 const LOGIN_SUCCESS = 'APP/LOGIN_SUCCESS';
@@ -18,7 +18,7 @@ const initialState = {
   facultyList: []
 };
 // Reducer
-export default function reducer(state = {}, action = {}) {
+export default function reducer(state = initialState, action = {}) {
   switch (action.type) {
     case LOGIN: {
       return {...state, loginLoading: true};
@@ -75,7 +75,7 @@ export function doLoginError({ error }) {
 export const loginEpic = (action$) =>
   action$
     .ofType(LOGIN)
-    .map(({ payload: { username, password } }) => btoa(`${username}:${password}`))
+    .map(({ payload: { username, password } }) => Base64.encode(`${username}:${password}`))
     .mergeMap(token =>
       ajax({
         url: `https://auth.kaptest.com/auth/kbs/token/${token}`,
